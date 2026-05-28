@@ -7,8 +7,6 @@
             "extensions": [
                 "redhat.vscode-xml",
                 "ms-python.python"
-                "qwtel.sqlite-viewer"
-                "alexcvzz.vscode-sqlite"
             ]
         }
     }
