@@ -12,4 +12,4 @@ simple startup information that you might need while you engage in the
 workshop. Please select your workshop below. 
 
 ### Workshops hosted
-- [2026.08.16 Global 2026](./2026.08.16)
+- [2026.08.16 Global 2026]./2026.08.16]
