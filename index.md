@@ -13,6 +13,7 @@ workshop. Please select your workshop below.
 
 
 ### Updcoming Workshops
-- [2026.08.16 Global 2026]({% post_url 2026-06-11-global %})
+- [2026.08.16 Global 2026]({% post_url 2026-06-10-global %})
+
 
 ### Past Workshops
