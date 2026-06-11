@@ -18,7 +18,7 @@ email: cyclus-dev@googlegroups.com
 description: >- # this means to ignore newlines until "baseurl:"
   Website for the Cyclus Workshop based in GitHub Codespaces.
   This website accompanies a live workshop setting for Cyclus. 
-# baseurl: "Workshop-Codespace" # the subpath of your site, e.g. /blog
+baseurl: "/Workshop-Codespace" # the subpath of your site, e.g. /blog
 url: "fuelcycle.org" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  jekyll
