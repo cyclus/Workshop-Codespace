@@ -35,22 +35,22 @@ Once you have a GitHub account, and are signed in on
 1. From the Tutorial Repository page, hit the "Fork" button in the top right of
  the page to make a copy of the repository associated with your GitHub account.
 
-![Click the Fork Button](../img/Codespace-Landing.png)
+![Click the Fork Button]({{ site.baseurl }}/img/Codespace-Landing.png)
 
 and then press "Create fork" 
 
-![Create Fork](../img/Create-Fork.png)
+![Create Fork]({{ site.baseurl }}/img/Create-Fork.png)
 
 2. Check that you are now on the GitHub page of your fork (the URL should have 
 changed from https://github.com/cyclus/Workshop-Codespace to something like 
 https://github.com/your-username/Workshop-Codespace). Once you are, press the 
 green "Code" button:
 
-![Code Button](../img/Local-Fork.png)
+![Code Button]({{ site.baseurl }}/img/Local-Fork.png)
 
 which should bring up a menu that looks like this:
 
-![Codespace Menu](../img/Create-Codespace.png)
+![Codespace Menu]({{ site.baseurl }}/img/Create-Codespace.png)
 
 Note that you may need to click the "Codespace" button in the menu that appears
  to see the above.
@@ -61,7 +61,7 @@ environment inside your browser with Cyclus pre-installed and configured. While
  it is loading, do not hit any buttons. It will take 2-3 minutes to fully 
  initialize. During this initialization, it will look like this:
 
-![Inside the Codespace](../img/Codespace-Launched.png)
+![Inside the Codespace]({{ site.baseurl }}/img/Codespace-Launched.png)
 
 
 If you run into a problem with initialization, it should be safe to refresh the
@@ -75,27 +75,27 @@ four main "panes" within VS code:
 ### File Editor:
 In this pane, you will see open files and can edit their contents.
 
-![File Editor](../img/VS-Code-Editor.png)
+![File Editor]({{ site.baseurl }}/img/VS-Code-Editor.png)
 
 ### Terminal:
 The terminal is where you will be able to interact with the codespace 
 environment and run Cyclus simulations. This is likely the pane you will 
 interact with most after the file editor.
 
-![Terminal](../img/VS-Code-Terminal.png)
+![Terminal]({{ site.baseurl }}/img/VS-Code-Terminal.png)
 
 ### File Explorer:
 The file explorer shows all files that are available within the Codespace. From
  this pane, you are able to navigate the folders in the environment, open, and 
  create new files.
 
-![File Explorer](../img/VS-Code-Explorer.png)
+![File Explorer]({{ site.baseurl }}/img/VS-Code-Explorer.png)
 
 ### Copilot
 This pane is optional, and allows users to interact with GitHub copilot. For 
 the purpose of this tutorial, we recommend you close this pane.
 
-![Copilot](../img/VS-Code-Copilot.png)
+![Copilot]({{ site.baseurl }}/img/VS-Code-Copilot.png)
 
 ## [Step 4] Verify Cyclus Configuration
 Finally, verify that Cyclus is installed by running the following commands.
