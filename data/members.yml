@@ -30,6 +30,13 @@
     - url: https://github.com/abachma2
       name: GitHub Page
       
+      - name: Connor Welch
+  pic: /img/empty_image.png ##get temporary placeholder image
+  description: Graduate Student at Oregon State University 
+  social: 
+    - url: http://github.com/ConnorWelch-OSU
+      name: GitHub Page
+      
 - name: Madicken Munk
   pic: /img/munk.png 
   description: Assistant Professor at Oregon State University 
