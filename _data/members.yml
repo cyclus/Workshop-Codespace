@@ -41,7 +41,7 @@
       name: GitHub Page
 
 - name: Connor Welch
-  pic: /img/connor_pic.jpeg ##get temporary placeholder image
+  pic: /img/connor_pic.jpg ##get temporary placeholder image
   description: Graduate Student at Oregon State University 
   social: 
     - url: http://github.com/ConnorWelch-OSU
