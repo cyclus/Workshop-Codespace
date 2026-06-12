@@ -10,13 +10,13 @@
     },
     "remoteUser": "root",
     "waitFor": "postStartCommand",
-    "postCreateCommand": "echo 'export LC_ALL=C; unset LANGUAGE' >> ~/.bashrc && apt-get update && apt-get install -y graphviz && /usr/bin/python3 -m pip install --user --upgrade ipykernel graphviz matplotlib matplotlib-inline --break-system-packages",
+    "postCreateCommand": "echo 'export LC_ALL=C; unset LANGUAGE' >> ~/.bashrc && apt-get update && apt-get install -y graphviz sqlite3 && /usr/bin/python3 -m pip install --user --upgrade ipykernel graphviz matplotlib matplotlib-inline --break-system-packages",
     "customizations": {
         "vscode": {
             "extensions": [
                 "redhat.vscode-xml",
                 "ms-python.python",
-                "qwtel.sqlite-viewer",
+                "yy0931.vscode-sqlite3-editor",
                 "alexcvzz.vscode-sqlite",
                 "ms-toolsai.jupyter"
             ]
