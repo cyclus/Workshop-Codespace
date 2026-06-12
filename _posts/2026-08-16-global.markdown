@@ -6,15 +6,29 @@ date:   2026-08-16 13:00:00 -0500
 
 # Logistics
 
-- Sunday 1-5pm, Global 2026, Chicago
-- Workshop website: [https://www.ans.org/meetings/global2026/calendar/event-2156/](https://www.ans.org/meetings/global2026/calendar/event-2156/)
-- Please bring a laptop 
-- [VS Code Tricks Reference]({{ site.baseurl }}/pages/vscode_tips_tricks)
+- When: Sunday 1-5pm
+- Where: [Global 2026, Chicago](https://www.ans.org/meetings/global2026/calendar/event-2156/)
+- How: Please bring a laptop or tablet [^1].
+- What: [Start Here](https://github.com/cyclus/Workshop-Codespace)
 
+## Helpful Links
+- [Codespace](https://github.com/cyclus/Workshop-Codespace)
+- [VS Code Tricks Reference]({{ site.baseurl }}/pages/vscode_tips_tricks)
+- [Self-Guided User Tutorial](https://fuelcycle.org/user/tutorial/index.html)
+- [Collaborative Notes](https://hackmd.io/@munkm/HkYSryc-Mg/edit)
 
 # Your Instructors
 
 # How to Ask for Help
+
+You will have **one <span style="color: #008000;">green</span>** and **one
+<span style="color: #ff4500;">red</span>** sticky note.  Sometimes when you
+have completed an exercise, we'll ask you to put the green sticky note on your
+laptop. If you run into a problem and need help, put up the <span style="color:
+#ff4500;">red</span> note.  These can be held up for voting, but their real use
+is as status flags.  With these, the instructor can quickly see from the front
+of the room what state the class is in and the helpers will know who can use
+some assistance.
 
 # First Steps
 
@@ -113,3 +127,5 @@ which cyclus
 cyclus_unit_tests
 {% endhighlight %}
 
+
+[^1]: This Cyclus Workshop can be run from a smartphone, but it is not recommended. 
