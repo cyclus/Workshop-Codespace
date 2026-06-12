@@ -1,198 +1,1775 @@
-<!--Cyclus Schema-->
-
 <grammar xmlns="http://relaxng.org/ns/structure/1.0"
-datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  xmlns:a="http://relaxng.org/ns/annotation/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
 <start>
 
 <element name="simulation">
-  <optional><element name="schematype"><text/></element></optional>
-<interleave>
+  <a:documentation>A complete Cyclus simulation</a:documentation>
+  <optional><element name="schematype">
+    <a:documentation>Select between a hierarchical schema (default) and a flat schema.</a:documentation>
+    <text/></element></optional>
 
-  <optional><element name="ui"><text/></element></optional>
-  
-  <element name ="control">
-    <interleave>
-      <optional>
-        <element name="simhandle"> <data type="string"/> </element>
-      </optional>
-      <element name="duration"> <data type="nonNegativeInteger"/> </element>
-      <element name="startmonth"> <data type="nonNegativeInteger"/> </element>
-      <element name="startyear"> <data type="nonNegativeInteger"/> </element>
-      <optional>
-        <element name="decay"> <text/> </element>
-      </optional>
-      <optional> 
-        <element name="dt"><data type="nonNegativeInteger"/></element> 
-      </optional>
-      <optional>
-        <element name="explicit_inventory"> <data type="boolean"/> </element>
-      </optional>
-      <optional>
-        <element name="explicit_inventory_compact"> <data type="boolean"/> </element>
-      </optional>
-      <optional>
-          <element name="tolerance_generic"><data type="double"/></element>
-      </optional>
-      <optional>
-          <element name="tolerance_resource"><data type="double"/></element>
-      </optional>
-      <optional>
-          <element name="seed"><data type="positiveInteger" /></element>
-      </optional>
-      <optional>
-          <element name="stride"><data type="positiveInteger" /></element>
-      </optional>
-      <optional>
-        <element name="solver"> 
-          <interleave>
-            <optional><element name="config">
-            <choice>
-              <element name="greedy">
-                <interleave>
-                  <optional>
-                    <element name="preconditioner"> <text/> </element>
-                  </optional>
-                </interleave>
-              </element>
-              <element name="coin-or">
-                <interleave>
-                  <optional>
-                    <element name="timeout">  <data type="positiveInteger"/>  </element>
-                  </optional>
-                  <optional><element name="verbose"><data type="boolean"/></element></optional>
-                  <optional><element name="mps"><data type="boolean"/></element></optional>
-                </interleave>
-              </element>
-            </choice>
-            </element></optional>
-            <optional>
-              <element name="allow_exclusive_orders">
-                <data type="boolean" />
-              </element>
-            </optional>
-            <optional><!--deprecated. @TODO remove in release 1.5 -->
-              <element name="exclusive_orders_only">
-                <data type="boolean" />
-              </element>
-            </optional>
-          </interleave>
-        </element>
-      </optional>
-    </interleave>
-  </element>
+  <interleave>
 
-  <zeroOrMore>
-    <element name="commodity">
-      <interleave>
-        <element name="name"> <text/> </element>
-        <element name="solution_priority"> <data type="double"/> </element>
-      </interleave>
-    </element>
-  </zeroOrMore>
+    <optional><element name="ui"><text/></element></optional>
     
-  <element name="archetypes"> 
-    <oneOrMore>
-      <element name="spec">
-        <interleave>
-          <optional><element name="path"><text/></element></optional>
-          <optional><element name="lib"><text/></element></optional>
-          <element name="name"><text/></element>
-          <optional><element name="alias"><text/></element></optional>
-        </interleave>
-      </element>
-    </oneOrMore>
-  </element>
-
-  <oneOrMore>
-    <element name="facility">
+    <element name="control">
+      <a:documentation>Block to define control parameters of simulation.</a:documentation>
       <interleave>
-        <element name="name"> <text/> </element>
         <optional>
-          <element name="lifetime"> <data type="nonNegativeInteger"/> </element>
+          <element name="simhandle">
+            <a:documentation>A user-defined simulation handle. Default is to generate a long random UUID.</a:documentation>
+            <data type="string"/> </element>
         </optional>
-
-        <element name="config">
-          <choice>
-          <empty/>
-          </choice>
-        </element>
-      </interleave>
-    </element>
-  </oneOrMore>
-
-  <oneOrMore>
-    <element name="region"> <interleave>
-      <element name="name"> <text/> </element>
-      <optional>
-        <element name="lifetime"> <data type="nonNegativeInteger"/> </element>
-      </optional>
-
-      <element name="config">
-        <choice>
-        <empty/>
-        </choice>
-      </element>
-
-      <oneOrMore>
-        <element name="institution"> <interleave>
-          <element name="name"> <text/> </element>
-          <optional>
-            <element name="lifetime"> <data type="nonNegativeInteger"/> </element>
-          </optional>
-
-          <optional>
-            <element name="initialfacilitylist">
-              <oneOrMore>
-                <element name="entry">
+        <element name="duration"> 
+          <a:documentation>Simulation duration in units of time steps. Default time steps
+            are 1 month. See `dt` to change default time step length.</a:documentation>
+          <data type="nonNegativeInteger"/> </element>
+        <element name="startyear"> 
+          <a:documentation>First year of simulation, e.g. 2015 (integer)</a:documentation>
+          <data type="nonNegativeInteger"/> </element>
+        <element name="startmonth"> 
+          <a:documentation>First month of the simulation, e.g. 3 for March (integer)</a:documentation>
+          <data type="nonNegativeInteger"/> </element>
+        <optional>
+          <element name="decay"> 
+          <a:documentation>Mode for when radioactive decay occurs. Choose from "never", "manual", "lazy".</a:documentation>
+          <text/> </element>
+        </optional>
+        <optional> 
+          <element name="dt">
+            <a:documentation>Length of a time step in seconds. Default: 1 month = 1 year/12 (i.e. 2,629,846 seconds).</a:documentation>
+            <data type="nonNegativeInteger"/></element> 
+        </optional>
+        <optional>
+          <element name="explicit_inventory">
+            <a:documentation>A Boolean flag to indicate whether the database should include tables that explicitly
+              record the inventory of each resource buffer in each agent at each time step. (Default: False)</a:documentation>
+            <data type="boolean"/> </element>
+        </optional>
+        <optional>
+          <element name="explicit_inventory_compact">
+            <a:documentation>A Boolean flag to indicate whether the database should include compact tables that explicitly
+            record the inventory of each resource buffer in each agent at each time step. (Default: False)</a:documentation>
+            <data type="boolean"/> </element>
+        </optional>
+        <optional>
+            <element name="tolerance_generic">
+              <a:documentation>Value used as tolerance when comparing two generic floating point numbers. (Default: 1e-06)</a:documentation>
+              <data type="double"/></element>
+        </optional>
+        <optional>
+            <element name="tolerance_resource">
+              <a:documentation>Value used as tolerance when comparing two resource quantities. (Default: 1e-06)</a:documentation>              
+              <data type="double"/></element>
+        </optional>
+        <optional>
+            <element name="seed">
+              <a:documentation>Value used for seed in built in random number generator. (Default: 20160212)</a:documentation>              
+              <data type="nonNegativeInteger" /></element>
+        </optional>
+        <optional>
+            <element name="stride">
+              <a:documentation>Value used for stride in built in random number generator. (Default: 10000)</a:documentation>              
+              <data type="positiveInteger" /></element>
+        </optional>
+        <optional>
+          <element name="solver"> 
+            <a:documentation>Input block to select the solver mode and provide solver parameters.</a:documentation>
+            <interleave>
+              <optional><element name="config">
+              <a:documentation>Provide a solver configuration</a:documentation>
+              <choice>
+                <element name="greedy">
+                  <a:documentation>Choose the greedy solver</a:documentation>
                   <interleave>
-                    <element name="prototype"> <text/> </element>
-                    <element name="number"> <data type="nonNegativeInteger"/> </element>
+                    <optional>
+                      <element name="preconditioner"> 
+                        <a:documentation>Select a preconditioner for the greedy solver</a:documentation>
+                        <text/> </element>
+                    </optional>
                   </interleave>
                 </element>
-              </oneOrMore>
-            </element>
-          </optional>
-
-          <element name="config">
-            <choice>
-            <empty/>
-            </choice>
+                <element name="coin-or">
+                  <a:documentation>Select the COIN-OR mixed integer linear programming library solver</a:documentation>
+                  <interleave>
+                    <optional>
+                      <element name="timeout">
+                        <a:documentation>Select a time limit for how long you are willing to let the solver find a solution</a:documentation>
+                        <data type="positiveInteger"/>  </element>
+                    </optional>
+                    <optional>
+                      <element name="verbose">
+                        <a:documentation>A Boolean variable to determine whether there is verbose output from the COIN-OR solver.</a:documentation>
+                        <data type="boolean"/></element>
+                      </optional>
+                    <optional>
+                      <element name="mps">
+                        <a:documentation>A Boolean variable to determine whether an MPS file is written for each exchange.</a:documentation>
+                        <data type="boolean"/></element></optional>
+                  </interleave>
+                </element>
+              </choice>
+              </element></optional>
+              <optional>
+                <element name="allow_exclusive_orders">
+                  <a:documentation>A Boolean variable to determine whether exclusive orders are allowed (default: True)</a:documentation>
+                  <data type="boolean" />
+                </element>
+              </optional>
+            </interleave>
           </element>
-        </interleave> </element>
-      </oneOrMore>
+        </optional>
+      </interleave>
+    </element>
 
-    </interleave> </element>
-  </oneOrMore>
+    <zeroOrMore>
+      <element name="commodity">
+        <a:documentation>Commodities can be listed in order to provide a priority ordering for solving them in the DRE.</a:documentation>
+        <interleave>
+          <element name="name"> 
+            <a:documentation>The name of a commodity being given priority treatment.</a:documentation>
+            <text/> </element>
+          <element name="solution_priority"> 
+            <a:documentation>The relative solution priority of this commodity. Higher values have higher priority. (Default: -1)</a:documentation>
+            <data type="double"/> </element>
+        </interleave>
+      </element>
+    </zeroOrMore>
 
-  <zeroOrMore>
-    <element name="recipe">
-      <interleave>
-        <element name="name"><text/></element>
-        <element name="basis"><text/></element>
+    <oneOrMore>  
+      <element name="archetypes"> 
+        <a:documentation>A list of archetypes that will be dynamically loaded for use in Regions, Insitutions, and Facilities.</a:documentation>
         <oneOrMore>
-          <element name="nuclide">
+          <element name="spec">
+            <a:documentation>A complete archetype specification</a:documentation>
             <interleave>
-              <element name="id"><data type="string"/></element>
-              <element name="comp"><data type="double"/></element>
+              <optional>
+                <element name="path">
+                  <a:documentation>An optional path to find this archetype; only needed if not discoverable in the standard locations.</a:documentation>
+                  <text/></element></optional>
+              <optional>
+                <element name="lib">
+                  <a:documentation>An optional name for the library that contains this archetype.</a:documentation>
+                  <text/></element></optional>
+              <element name="name">
+                <a:documentation>The name that will be used to refer to this archetype.</a:documentation>
+                <text/></element>
+              <optional>
+                <element name="alias">
+                  <a:documentation>An optional alias to refer to this archetype by a different name.</a:documentation>
+                  <text/></element></optional>
             </interleave>
           </element>
         </oneOrMore>
-      </interleave>
-    </element>
-  </zeroOrMore>
+      </element>
+    </oneOrMore>
 
-  <zeroOrMore>
-    <element name="package">
-      <interleave>
-        <element name="name"><text/></element>
-        <element name="fill_min"><data type="double"/></element>
-        <element name="fill_max"><data type="double"/></element>
-        <element name="strategy"><text/></element>
-      </interleave>
-    </element>
-  </zeroOrMore>
+    <oneOrMore>
+      <element name="facility">
+        <a:documentation>A Facility prototype specification, with archetype,
+          archetype-specific parameters, and general facility parameters. Must
+          occur once, but may occur many times.</a:documentation> 
+        <interleave>
+          <element name="name">
+            <a:documentation>Prototype name</a:documentation>
+            <text/> </element>
+          <optional>
+            <element name="lifetime"> 
+              <a:documentation>Number of time steps that this archetypes is participating after it is deployed.</a:documentation>
+              <data type="nonNegativeInteger"/> </element>
+          </optional>
 
-</interleave> </element>
+          <element name="config">
+            <a:documentation>Configuration to specify which archetype is being used for this facility, and then 
+              provide parameters to specify a particular prototype.</a:documentation>
+            <choice>
+            <element name="KFacility">
+<interleave>
+    <element name="in_commod">
+        <a:documentation>commodity that the k-facility consumes</a:documentation>
+        <data type="token"/>
+    </element>
+    <element name="recipe_name">
+        <a:documentation>recipe name for the k-facility's in-commodity</a:documentation>
+        <data type="token"/>
+    </element>
+    <element name="out_commod">
+        <a:documentation>commodity that the k-facility supplies</a:documentation>
+        <data type="token"/>
+    </element>
+    <element name="in_capacity">
+        <a:documentation>number of commodity units that can be taken at each timestep (infinite capacity can be represented by a very large number)</a:documentation>
+        <data type="double"/>
+    </element>
+    <element name="out_capacity">
+        <a:documentation>number of commodity units that can be supplied at each timestep (infinite capacity can be represented by a very large number)</a:documentation>
+        <data type="double"/>
+    </element>
+    <optional>
+        <element name="current_capacity">
+            <a:documentation>number of output commodity units that can be supplied at the current time step (infinite capacity can be represented by a very large number )</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="max_inv_size">
+            <a:documentation>total maximum inventory size of the k-facility</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="k_factor_in">
+        <a:documentation>conversion factor that governs the behavior of the k-facility's input commodity capacity</a:documentation>
+        <data type="double"/>
+    </element>
+    <element name="k_factor_out">
+        <a:documentation>conversion factor that governs the behavior of the k-facility's output commodity capacity</a:documentation>
+        <data type="double"/>
+    </element>
+</interleave>
+
+</element>
+<element name="Predator">
+<interleave>
+    <element name="commod">
+        <a:documentation>commodity that the predator supplies</a:documentation>
+        <data type="token"/>
+    </element>
+    <element name="prey">
+        <a:documentation>prey that the predator hunts</a:documentation>
+        <data type="token"/>
+    </element>
+    <optional>
+        <element name="full">
+            <a:documentation>how many units of prey a predator consumes until it is satisfied</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="hunt_freq">
+            <a:documentation>how often a predator needs to hunt</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="hunt_cap">
+            <a:documentation>how many units of prey a predator can catch during a hunt</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="success">
+            <a:documentation>fraction of hunting success on a scale from 0 to 1</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="consumed">
+            <a:documentation>how many units of prey consumed per time step</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="hunt_factor">
+            <a:documentation>whether or not to base hunting success on relative predator/prey populations</a:documentation>
+            <data type="boolean"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="age">
+            <a:documentation>age of predator at beginning of simulation</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="lifespan">
+            <a:documentation>how long a predator lives</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="dead">
+            <a:documentation>flag for whether predator is currently dead</a:documentation>
+            <data type="boolean"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="nchildren">
+            <a:documentation>number of predator children born at each birthing instance</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="birth_and_death">
+            <a:documentation>whether or not simultaneous birth and death are allowed (i.e., can a facility give birth and die in the same time step?)</a:documentation>
+            <data type="boolean"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+<element name="Prey">
+<interleave>
+    <element name="commod">
+        <data type="token"/>
+    </element>
+    <optional>
+        <element name="age">
+            <a:documentation>age of prey at start of simulation</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="dead">
+            <a:documentation>flag for whether prey is currently dead</a:documentation>
+            <data type="boolean"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="nchildren">
+            <a:documentation>number of children born at each birthing instance</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="birth_freq">
+            <a:documentation>number of time steps between birth of children</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="birth_and_death">
+            <a:documentation>whether or not simultaneous birth and death are allowed (i.e., can a facility give birth and die in the same time step?)</a:documentation>
+            <data type="boolean"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+<element name="Sink">
+<interleave>
+    <element name="in_commods">
+        <a:documentation>commodities that the sink facility accepts </a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <optional>
+        <element name="recipe_name">
+            <a:documentation>Name of recipe to request. If empty, sink requests material no particular composition.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="max_inv_size">
+            <a:documentation>total maximum inventory size of sink facility</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="capacity">
+        <a:documentation>capacity the sink facility can accept at each time step</a:documentation>
+        <data type="double"/>
+    </element>
+</interleave>
+
+</element>
+<element name="Source">
+<interleave>
+    <element name="commod">
+        <a:documentation>commodity that the source facility supplies</a:documentation>
+        <data type="token"/>
+    </element>
+    <optional>
+        <element name="recipe_name">
+            <a:documentation>Recipe name for source facility's commodity.If empty, source supplies material with requested compositions.</a:documentation>
+            <data type="token"/>
+        </element>
+    </optional>
+    <element name="capacity">
+        <a:documentation>amount of commodity that can be supplied at each time step</a:documentation>
+        <data type="double"/>
+    </element>
+</interleave>
+
+</element>
+<element name="Conversion">
+<interleave>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="incommods">
+        <a:documentation>commodities that the conversion facility accepts</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <element name="outcommod">
+        <a:documentation>Output commodity on which the conversion facility offers material.</a:documentation>
+        <data type="string"/>
+    </element>
+    <optional>
+        <element name="throughput">
+            <a:documentation>throughput the facility can convert at each time step</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="input_capacity">
+            <a:documentation>Total capacity of the input buffer. The amount requested per time step is the minimum the conversion throughput and this capacity minus the amount of material in the input buffer.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+<element name="Enrichment">
+<interleave>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="feed_commod">
+        <a:documentation>feed commodity that the enrichment facility accepts</a:documentation>
+        <data type="string"/>
+    </element>
+    <element name="feed_recipe">
+        <a:documentation>recipe for enrichment facility feed commodity</a:documentation>
+        <data type="string"/>
+    </element>
+    <element name="product_commod">
+        <a:documentation>product commodity that the enrichment facility generates</a:documentation>
+        <data type="string"/>
+    </element>
+    <element name="tails_commod">
+        <a:documentation>tails commodity supplied by enrichment facility</a:documentation>
+        <data type="string"/>
+    </element>
+    <optional>
+        <element name="tails_assay">
+            <a:documentation>tails assay from the enrichment process</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="initial_feed">
+            <a:documentation>amount of natural uranium stored at the enrichment facility at the beginning of the simulation (kg)</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="initial_tails">
+            <a:documentation>amount of tails stored at the enrichment facility at the beginning of the simulation (kg) (based on recipe)</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="max_feed_inventory">
+            <a:documentation>maximum total inventory of natural uranium in the enrichment facility (kg)</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="max_enrich">
+            <data type="double">
+                <param name="minInclusive">0</param>
+                <param name="maxInclusive">1</param>
+            </data>
+        </element>
+    </optional>
+    <optional>
+        <element name="order_prefs">
+            <a:documentation>turn on preference ordering for input material so that EF chooses higher U235 content first</a:documentation>
+            <data type="boolean"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="swu_capacity">
+            <a:documentation>separative work unit (SWU) capacity of enrichment facility (kgSWU/timestep) </a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+<element name="FuelFab">
+<interleave>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="fill_commods">
+        <a:documentation>Ordered list of commodities on which to request filler stream material.</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <optional>
+        <element name="fill_commod_prefs">
+            <a:documentation>Filler stream commodity request preferences for each of the given filler commodities (same order). If unspecified, default is to use 1.0 for all preferences.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="double"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <element name="fill_recipe">
+        <a:documentation>Name of recipe to be used in filler material stream requests.</a:documentation>
+        <data type="string"/>
+    </element>
+    <element name="fill_size">
+        <a:documentation>Size of filler material stream inventory.</a:documentation>
+        <data type="double"/>
+    </element>
+    <element name="fiss_commods">
+        <a:documentation>Ordered list of commodities on which to requesting fissile stream material.</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <optional>
+        <element name="fiss_commod_prefs">
+            <a:documentation>Fissile stream commodity request preferences for each of the given fissile commodities (same order). If unspecified, default is to use 1.0 for all preferences.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="double"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="fiss_recipe">
+            <a:documentation>Name for recipe to be used in fissile stream requests. Empty string results in use of an empty dummy recipe.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <element name="fiss_size">
+        <a:documentation>Size of fissile material stream inventory.</a:documentation>
+        <data type="double"/>
+    </element>
+    <optional>
+        <element name="topup_commod">
+            <a:documentation>Commodity on which to request material for top-up stream. This MUST be set if 'topup_size &gt; 0'.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="topup_pref">
+            <a:documentation>Top-up material stream request preference.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="topup_recipe">
+            <a:documentation>Name of recipe to be used in top-up material stream requests. This MUST be set if 'topup_size &gt; 0'.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="topup_size">
+            <a:documentation>Size of top-up material stream inventory.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="outcommod">
+        <a:documentation>Commodity on which to offer/supply mixed fuel material.</a:documentation>
+        <data type="string"/>
+    </element>
+    <optional>
+        <element name="throughput">
+            <a:documentation>Maximum number of kg of fuel material that can be supplied per time step.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="spectrum">
+        <a:documentation>The type of cross-sections to use for composition property calculation. Use 'fission_spectrum_ave' for fast reactor compositions or 'thermal' for thermal reactors.</a:documentation>
+        <data type="string"/>
+    </element>
+</interleave>
+
+</element>
+<element name="Mixer">
+<interleave>
+    <element name="in_streams">
+        <oneOrMore>
+            <element name="stream">
+                <interleave>
+                    <element name="info">
+                        <interleave>
+                            <element name="mixing_ratio">
+                                <data type="double"/>
+                            </element>
+                            <element name="buf_size">
+                                <data type="double"/>
+                            </element>
+                        </interleave>
+                    </element>
+                    <element name="commodities">
+                        <oneOrMore>
+                            <element name="item">
+                                <interleave>
+                                    <element name="commodity">
+                                        <data type="string"/>
+                                    </element>
+                                    <element name="pref">
+                                        <data type="double"/>
+                                    </element>
+                                </interleave>
+                            </element>
+                        </oneOrMore>
+                    </element>
+                </interleave>
+            </element>
+        </oneOrMore>
+    </element>
+    <element name="out_commod">
+        <a:documentation>Commodity on which to offer/supply mixed fuel material.</a:documentation>
+        <data type="string"/>
+    </element>
+    <optional>
+        <element name="out_buf_size">
+            <a:documentation>Maximum amount of mixed material that can be stored. If full, the facility halts operation until space becomes available.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="throughput">
+            <a:documentation>Maximum number of kg of fuel material that can be mixed per time step.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+<element name="Reactor">
+<interleave>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="fuel_incommods">
+        <a:documentation>Ordered list of input commodities on which to requesting fuel.</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <element name="fuel_inrecipes">
+        <a:documentation>Fresh fuel recipes to request for each of the given fuel input commodities (same order).</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <optional>
+        <element name="fuel_prefs">
+            <a:documentation>The preference for each type of fresh fuel requested corresponding to each input commodity (same order).  If no preferences are specified, 1.0 is used for all fuel requests (default).</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="double"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <element name="fuel_outcommods">
+        <a:documentation>Output commodities on which to offer spent fuel originally received as each particular input commodity (same order).</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <element name="fuel_outrecipes">
+        <a:documentation>Spent fuel recipes corresponding to the given fuel input commodities (same order). Fuel received via a particular input commodity is transmuted to the recipe specified here after being burned during a cycle.</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <optional>
+        <element name="recipe_change_times">
+            <a:documentation>A time step on which to change the input-output recipe pair for a requested fresh fuel.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="int"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="recipe_change_commods">
+            <a:documentation>The input commodity indicating fresh fuel for which recipes will be changed. Same order as and direct correspondence to the specified recipe change times.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="string"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="recipe_change_in">
+            <a:documentation>The new input recipe to use for this recipe change. Same order as and direct correspondence to the specified recipe change times.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="string"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="recipe_change_out">
+            <a:documentation>The new output recipe to use for this recipe change. Same order as and direct correspondence to the specified recipe change times.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="string"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <element name="assem_size">
+        <a:documentation>Mass (kg) of a single assembly.</a:documentation>
+        <data type="double"/>
+    </element>
+    <element name="n_assem_batch">
+        <a:documentation>Number of assemblies that constitute a single batch.  This is the number of assemblies discharged from the core fully burned each cycle.Batch size is equivalent to ``n_assem_batch / n_assem_core``.</a:documentation>
+        <data type="int"/>
+    </element>
+    <optional>
+        <element name="n_assem_core">
+            <a:documentation>Number of assemblies that constitute a full core.</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="n_assem_fresh">
+            <a:documentation>Number of fresh fuel assemblies to keep on-hand if possible.</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="n_assem_spent">
+            <a:documentation>Number of spent fuel assemblies that can be stored on-site before reactor operation stalls.</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="initial_core_recipes">
+            <a:documentation>Specify an in-commodity recipe name that should havean initial inventory. This material will be added to the core as an assembly.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="string"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="initial_core_amt">
+            <a:documentation>Specify an amount associated with an in-commidity recipeSame order as initial core recipes.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="int"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="initial_fresh_recipes">
+            <a:documentation>Specify an in-commodity recipe name that should havean initial inventory. This material will be added to the on-hand fresh fuel inventory as an assembly.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="string"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="initial_fresh_amt">
+            <a:documentation>Specify an amount associated with an in-commidity recipeSame order as initial fresh recipes.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="int"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="initial_spent_recipes">
+            <a:documentation>Specify an out-commodity recipe name that should havean initial inventory.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="string"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="initial_spent_amt">
+            <a:documentation>Specify an amount associated with an out-commidity recipeSame order as initial spent recipes.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="int"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="cycle_time">
+            <a:documentation>The duration of a full operational cycle (excluding refueling time) in time steps.</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="refuel_time">
+            <a:documentation>The duration of a full refueling period - the minimum time between the end of a cycle and the start of the next cycle.</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="cycle_step">
+            <a:documentation>Number of time steps since the start of the last cycle. Only set this if you know what you are doing</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="power_cap">
+            <a:documentation>Amount of electrical power the facility produces when operating normally.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="power_name">
+            <a:documentation>The name of the 'power' commodity used in conjunction with a deployment curve.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="side_products">
+            <a:documentation>Ordered vector of side product the reactor produces with power</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="string"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="side_product_quantity">
+            <a:documentation>Ordered vector of the quantity of side product the reactor produces with power</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="double"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="decom_transmute_all">
+            <a:documentation>If true, the archetype transmutes all assemblies upon decommissioning If false, the archetype only transmutes half.</a:documentation>
+            <data type="boolean"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="pref_change_times">
+            <a:documentation>A time step on which to change the request preference for a particular fresh fuel type.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="int"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="pref_change_commods">
+            <a:documentation>The input commodity for a particular fuel preference change.  Same order as and direct correspondence to the specified preference change times.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="string"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="pref_change_values">
+            <a:documentation>The new/changed request preference for a particular fresh fuel. Same order as and direct correspondence to the specified preference change times.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="double"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="keep_packaging">
+            <a:documentation>Boolean value about whether to keep packaging. If true, packaging will not be stripped upon acceptance into the reactor. If false, package type will be stripped immediately upon acceptance. Has no effect if the incoming material is not packaged.</a:documentation>
+            <data type="boolean"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+<element name="Separations">
+<interleave>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="feed_commods">
+        <a:documentation>Ordered list of commodities on which to request feed material to separate. Order only matters for matching up with feed commodity preferences if specified.</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <optional>
+        <element name="feed_commod_prefs">
+            <a:documentation>Feed commodity request preferences for each of the given feed commodities (same order). If unspecified, default is to use 1.0 for all preferences.</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="double"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="feed_recipe">
+            <a:documentation>Name for recipe to be used in feed requests. Empty string results in use of a dummy recipe.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <element name="feedbuf_size">
+        <a:documentation>Maximum amount of feed material to keep on hand.</a:documentation>
+        <data type="double"/>
+    </element>
+    <optional>
+        <element name="throughput">
+            <a:documentation>Maximum quantity of feed material that can be processed per time step.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="leftover_commod">
+            <a:documentation>Commodity on which to trade the leftover separated material stream. This MUST NOT be the same as any commodity used to define the other separations streams.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="leftoverbuf_size">
+            <a:documentation>Maximum amount of leftover separated material (not included in any other stream) that can be stored. If full, the facility halts operation until space becomes available.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="streams">
+        <a:documentation>Output streams for separations. Each stream must have a unique name identifying the commodity on  which its material is traded, a max buffer capacity in kg (neg values indicate infinite size), and a set of component efficiencies. 'comp' is a component to be separated into the stream (e.g. U, Pu, etc.) and 'eff' is the mass fraction of the component that is separated from the feed into this output stream. If any stream buffer is full, the facility halts operation until space becomes available. The sum total of all component efficiencies across streams must be less than or equal to 1 (e.g. sum of U efficiencies for all streams must be less than or equal to 1).</a:documentation>
+        <oneOrMore>
+            <element name="item">
+                <interleave>
+                    <element name="commod">
+                        <data type="string"/>
+                    </element>
+                    <element name="info">
+                        <interleave>
+                            <element name="buf_size">
+                                <data type="double"/>
+                            </element>
+                            <element name="efficiencies">
+                                <oneOrMore>
+                                    <element name="item">
+                                        <interleave>
+                                            <element name="comp">
+                                                <data type="string"/>
+                                            </element>
+                                            <element name="eff">
+                                                <data type="double"/>
+                                            </element>
+                                        </interleave>
+                                    </element>
+                                </oneOrMore>
+                            </element>
+                        </interleave>
+                    </element>
+                </interleave>
+            </element>
+        </oneOrMore>
+    </element>
+</interleave>
+
+</element>
+<element name="Sink">
+<interleave>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="in_commods">
+        <a:documentation>commodities that the sink facility accepts</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <optional>
+        <element name="in_commod_prefs">
+            <a:documentation>preferences for each of the given commodities, in the same order.Defauts to 1 if unspecified</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="double"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="recipe_name">
+            <a:documentation>name of recipe to use for material requests, where the default (empty string) is to accept everything</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="max_inv_size">
+            <a:documentation>total maximum inventory size of sink facility</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="capacity">
+            <a:documentation>capacity the sink facility can accept at each time step</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="random_size_type">
+            <a:documentation>type of random behavior to use. Default None, other options are 'UniformReal', 'UniformInt', 'NormalReal', and 'NormalInt'</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="random_size_mean">
+            <a:documentation>When a normal distribution is used to determine the size of the request, this is the fraction of available space to use as the mean. Default 1.0. Note that values significantly above 1 without a correspondingly large std dev may result in inefficient use of the random number generator.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="random_size_stddev">
+            <a:documentation>When a normal distribution is used to determine the size of the request, this is the fraction of available space to use as the standard deviation. Default 0.1</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="random_frequency_type">
+            <a:documentation>type of random behavior to use. Default None, other options are, 'UniformInt', and 'NormalInt'. When using 'UniformInt', also set 'random_frequency_min' and 'random_frequency_max'. For 'NormalInt', set 'random_frequency_mean' and 'random_fequency_stddev', min and max values are optional. </a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="random_frequency_mean">
+            <a:documentation>When a normal distribution is used to determine the frequency of the request, this is the mean. Default 1</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="random_frequency_stddev">
+            <a:documentation>When a normal distribution is used to determine the frequency of the request, this is the standard deviation. Default 1</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="random_frequency_min">
+            <a:documentation>When a random distribution is used to determine the frequency of the request, this is the lower bound. Default 1</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="random_frequency_max">
+            <a:documentation>When a random distribution is used to determine the frequency of the request, this is the upper bound. Default 2147483647 (CY_LARGE_INT)</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="keep_packaging">
+            <a:documentation>Boolean value about whether to keep packaging. If true, packaging will not be stripped upon acceptance into the sink. If false, package type will be stripped immediately upon acceptance. Has no effect if the incoming material is not packaged.</a:documentation>
+            <data type="boolean"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+<element name="Source">
+<interleave>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="outcommod">
+        <a:documentation>Output commodity on which the source offers material.</a:documentation>
+        <data type="string"/>
+    </element>
+    <optional>
+        <element name="outrecipe">
+            <a:documentation>Name of composition recipe that this source provides regardless of requested composition. If empty, source creates and provides whatever compositions are requested.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="inventory_size">
+            <a:documentation>Total amount of material this source has remaining. Every trade decreases this value by the supplied material quantity.  When it reaches zero, the source cannot provide any  more material.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="throughput">
+            <a:documentation>amount of commodity that can be supplied at each time step</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="package">
+            <a:documentation>Name of package that this source provides. Offers will only bemade in packagable quantities of material.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="transport_unit">
+            <a:documentation>Name of transport unit that this source uses to ship packages of material. Offers will only be made in shippable quantities of packages. Optional if packaging is used, but use of transport units requires packaging type to also be set</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+<element name="Storage">
+<interleave>
+    <element name="in_commods">
+        <a:documentation>commodities accepted by this facility</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <optional>
+        <element name="in_commod_prefs">
+            <a:documentation>preferences for each of the given commodities, in the same order.Defauts to 1 if unspecified</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="double"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <element name="out_commods">
+        <a:documentation>commodity produced by this facility. Multiple commodity tracking is currently not supported, one output commodity catches all input commodities.</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <optional>
+        <element name="in_recipe">
+            <a:documentation>recipe accepted by this facility, if unspecified a dummy recipe is used</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="residence_time">
+            <a:documentation>the minimum holding time for a received commodity (timesteps).</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="throughput">
+            <a:documentation>the max amount that can be moved through the facility per timestep (kg)</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="max_inv_size">
+            <a:documentation>the maximum amount of material that can be in all storage buffer stages</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="discrete_handling">
+            <a:documentation>Determines if Storage will divide resource objects. Only controls material handling within this facility, has no effect on DRE material handling. If true, batches are handled as discrete quanta, neither split nor combined. Otherwise, batches may be divided during processing. Default to false (continuous))</a:documentation>
+            <data type="boolean"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="package">
+            <a:documentation>Outgoing material will be packaged when trading.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="transport_unit">
+            <a:documentation>Outgoing material, after packaging, will be further restricted by transport unit when trading.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="active_buying_frequency_type">
+            <a:documentation>Options: Fixed, Uniform, Normal, Binomial, FixedWithDisruption. Fixed requires active_buying_val. Uniform requires active_buying_min and active_buying_max.  Normal requires active_buying_mean and active_buying_std, with optional active_buying_min and active_buying_max. Binomial requires active_buying_end_probability.FixedWithDisruption has a probability that any given cycle will have a disrupted, active length.  Once per cycle, a Bernoulli distribution (Binomial dist with N=1) will be sampled to determine if typical or disrupted cycle. If typical, active_buying_val is cycle length. If disrupted, active_buying_disruption.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="active_buying_val">
+            <a:documentation>The length in time steps of the active buying period. Required for fixed active_buying_frequency_type. Must be greater than or equal to 1 (i.e., agent cannot always be dormant)</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="active_buying_min">
+            <a:documentation>The minimum length in time steps of the active buying period. Required for Uniform and optional for Normal active_buying_frequency_type. Must be greater than or equal to 1 </a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="active_buying_max">
+            <a:documentation>The maximum length in time steps of the active buying period. Required for Uniform active_buying_frequency_type, optional for Normal. Must be greater than or equal to active_buying_min </a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="active_buying_mean">
+            <a:documentation>The mean length in time steps of the active buying period. Required for Normal active_buying_frequency_type. Must be greater than or equal to 1 </a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="active_buying_stddev">
+            <a:documentation>The standard deviation of the length in time steps of the active buying period. Required for Normal active_buying_frequency_type. Must be greater than or equal to 0 </a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="active_buying_end_probability">
+            <a:documentation>Binomial distribution has a fixed probability of going dormant at any given timestep, like a weighted coin flip. Required for Binomial active_buying_frequency_type. Must be between 0 and 1</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="active_buying_disruption_probability">
+            <a:documentation>Probability that the agent undergoes a disruption (disrupted active period) during any given cycle. Required for FixedWithDisruption active_buying_frequency_type.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="active_buying_disruption">
+            <a:documentation>When a active cycle is disrupted, this is length of the active period instead of active_buying_val. Required for FixedWithDisruption active_buying_frequency_type</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="dormant_buying_frequency_type">
+            <a:documentation>Options: Fixed, Uniform, Normal, Binomial, FixedWithDisruption. Fixed requires dormant_buying_val. Uniform requires dormant_buying_min and dormant_buying_max. Normal requires dormant_buying_mean and dormant_buying_std, with optional dormant_buying_min and dormant_buying_max. Binomial requires dormant_buying_end_probability. FixedWithDisruption has a probability that any given cycle will have a disrupted, or long, outage.  Once per cycle, a Bernoulli distribution (Binomial dist with N=1) will be sampled to determine if typical or disrupted cycle. If typical, dormant_buying_val is cycle length. If disrupted, dormant_buying_disruption.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="dormant_buying_val">
+            <a:documentation>The length in time steps of the dormant buying period. Required for fixed dormant_buying_frequency_type. Default is -1, agent has no dormant period and stays active.</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="dormant_buying_min">
+            <a:documentation>The minimum length in time steps of the dormant buying period. Required for Uniform and optional for Normal dormant_buying_frequency_type.</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="dormant_buying_max">
+            <a:documentation>The maximum length in time steps of the dormant buying period. Required for Uniform dormant_buying_frequency_type, optional for Normal. Must be greater than or equal to dormant_buying_min </a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="dormant_buying_mean">
+            <a:documentation>The mean length in time steps of the dormant buying period. Required for Normal dormant_buying_frequency_type. Must be greater than or equal to 0 </a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="dormant_buying_stddev">
+            <a:documentation>The standard deviation of the length in time steps of the dormant buying period. Required for Normal dormant_buying_frequency_type. Must be greater than or equal to 0 </a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="dormant_buying_end_probability">
+            <a:documentation>Binomial distribution has a fixed probability of going active at any given timestep, like a weighted coin flip. Required for Binomial dormant_buying_frequency_type. Must be between 0 and 1</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="dormant_buying_disruption_probability">
+            <a:documentation>Probability that the agent undergoes a disruption (longer offline period) during any given cycle. Required for FixedWithDisruption dormant_buying_frequency_type.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="dormant_buying_disruption">
+            <a:documentation>When a dormant cycle is disrupted, this is length of the offline period instead of dormant_buying_val. Required for FixedWithDisruption dormant_buying_frequency_type</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="buying_size_type">
+            <a:documentation>Behavior function used to determine the size of requests made. All values are a fraction of maximum capacity, determined by the throughput and capacity remaining. Options: Fixed, Uniform, Normal. Fixed is default behavior. Uniform requires buying_size_min and buying_size_max. Normal requires buying_size_mean and buying_size_stddev, optional buying_size_min and buying_size_max.</a:documentation>
+            <data type="string"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="buying_size_val">
+            <a:documentation>The size of the buy request as a fraction of maximum capacity. Optional for Fixed buying_size_type. Must be greater than or equal to 0.0</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="buying_size_min">
+            <a:documentation>The minimum size of the buy request as a fraction of maximum capacity. Required for Uniform and optional for Normal buying_size_type. Must be greater than or equal to zero.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="buying_size_max">
+            <a:documentation>The maximum size of the buy request as a fraction of maximum capacity. Required for Uniform buying_size_type, optional for Normal. Must be greater than or equal to buying_size_min </a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="buying_size_mean">
+            <a:documentation>The mean size of the buy request as a fraction of maximum capacity. Required for Normal buying_size_type.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="buying_size_stddev">
+            <a:documentation>The standard deviation of the size of the buy request as a fraction of maximum capacity. Required for Normal buying_size_type.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="reorder_point">
+            <a:documentation>The point at which the facility will request more material. Above this point, no request will be made. Must be less than max_inv_size.If paired with reorder_quantity, this agent will have an (R,Q) inventory policy. If reorder_point is used alone, this agent will have an (s,S) inventory policy,  with S (the maximum) being set at max_inv_size.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="reorder_quantity">
+            <a:documentation>The amount of material that will be requested when the reorder point is reached. Exclusive request, so will demand exactly reorder_quantity.Reorder_point + reorder_quantity must be less than max_inv_size.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="cumulative_cap">
+            <a:documentation>After receiving this much material cumulatively, the agent will go dormant. Must be paired with dormant_buying_frequency_type and any other dormant parameters. The per-time step demand is unchanged except the cycle cap is almost reached.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="sell_quantity">
+            <a:documentation>material will be sold in integer multiples of this quantity. If the buffer contains less than the sell quantity, no material will be offered</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+
+            </choice>
+          </element>
+        </interleave>
+      </element>
+    </oneOrMore>
+
+    <oneOrMore>
+      <element name="region"> 
+        <a:documentation>A region that represents a geopolitical division of the world and contains one or more institutions.</a:documentation>
+        <interleave>
+          <element name="name">
+            <a:documentation>The name of the region</a:documentation>
+            <text/> </element>
+          <optional>
+            <element name="lifetime">
+              <a:documentation>The number of time steps that this region participates in the simulation once it begins.</a:documentation>
+              <data type="nonNegativeInteger"/> </element>
+          </optional>
+
+          <element name="config">
+            <a:documentation>Configuration to specify which archetype is being used for this region, and then 
+              provide parameters to specify a particular prototype.</a:documentation>
+            <choice>
+            <element name="NullRegion">
+<interleave>
+    <optional>
+        <element name="corporate_income_tax_rate">
+            <a:documentation>Income Tax Rate for all facilities belonging to this region as decimal (1% --&gt; 0.01)</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+<element name="GrowthRegion">
+<interleave>
+    <element name="growth">
+        <a:documentation>Nameplate capacity demand functions.
+Each demand type must be for a commodity for which capacity can be built (e.g., 'power' from cycamore::Reactors). Any archetype that implements the cyclus::toolkit::CommodityProducer interface can interact with the GrowthRegion in the manner.
+Demand functions are defined as piecewise functions. Each piece must be provided a starting time and function description. Each function description is comprised of a function type and associated parameters.
+  * Start times are inclusive. For a start time :math:`t_0`, the demand function is evaluated on :math:`[t_0, infinity)`.
+  * Supported function types are based on the `cyclus::toolkit::BasicFunctionFactory types &lt;http://fuelcycle.org/cyclus/api/classcyclus_1_1toolkit_1_1BasicFunctionFactory.html#a2f3806305d99a745ab57c300e54a603d&gt;`_.
+  * The type name is the lower-case name of the function (e.g., 'linear', 'exponential', etc.).
+  * The parameters associated with each function type can be found on their respective documentation pages.</a:documentation>
+        <oneOrMore>
+            <element name="item">
+                <interleave>
+                    <element name="commod">
+                        <data type="string"/>
+                    </element>
+                    <element name="piecewise_function">
+                        <oneOrMore>
+                            <element name="piece">
+                                <interleave>
+                                    <element name="start">
+                                        <data type="int"/>
+                                    </element>
+                                    <element name="function">
+                                        <interleave>
+                                            <element name="type">
+                                                <data type="string"/>
+                                            </element>
+                                            <element name="params">
+                                                <data type="string"/>
+                                            </element>
+                                        </interleave>
+                                    </element>
+                                </interleave>
+                            </element>
+                        </oneOrMore>
+                    </element>
+                </interleave>
+            </element>
+        </oneOrMore>
+    </element>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+
+            </choice>
+          </element>
+
+          <oneOrMore>
+            <element name="institution"> 
+              <a:documentation>An institution that represents an entity that can own/operate facilities within a region.</a:documentation>
+              <interleave>
+                <element name="name">
+                  <a:documentation>The name of the institution</a:documentation>
+                  <text/> </element>
+                <optional>
+                  <element name="lifetime"> 
+                    <a:documentation>The number of time steps that this institution participates in the simulation once it begins.</a:documentation>
+                    <data type="nonNegativeInteger"/> </element>
+                </optional>
+
+                <optional>
+                  <element name="initialfacilitylist">
+                    <a:documentation>A list of facility prototypes that are operating when this institution begins participating in the simulation.</a:documentation>
+                    <oneOrMore>
+                      <element name="entry">
+                        <a:documentation>An entry for each prototype that has some number of initial facilities.</a:documentation>
+                        <interleave>
+                          <element name="prototype"> 
+                            <a:documentation>The name of the prototype that has at least one initial facility.</a:documentation>
+                            <text/> </element>
+                          <element name="number"> 
+                            <a:documentation>The number of this prototype that are operating initially.</a:documentation>
+                            <data type="nonNegativeInteger"/> </element>
+                        </interleave>
+                      </element>
+                    </oneOrMore>
+                  </element>
+                </optional>
+
+                <element name="config">
+                  <a:documentation>Configuration to specify which archetype is being used for this institution, and then 
+                    provide parameters to specify a particular prototype.</a:documentation>
+                  <choice>
+                  <element name="NullInst">
+<text/>
+
+</element>
+<element name="DeployInst">
+<interleave>
+    <element name="prototypes">
+        <a:documentation>Ordered list of prototypes to build.</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <element name="build_times">
+        <a:documentation>Time step on which to deploy agents given in prototype list (same order).</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="int"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <element name="n_build">
+        <a:documentation>Number of each prototype given in prototype list that should be deployed (same order).</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="int"/>
+            </element>
+        </oneOrMore>
+    </element>
+    <optional>
+        <element name="deployyear">
+            <a:documentation>Year to start deploying prototypes.</a:documentation>
+            <data type="int"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="lifetimes">
+            <a:documentation>Lifetimes for each prototype in prototype list (same order). These lifetimes override the lifetimes in the original prototype definition. If unspecified, lifetimes from the original prototype definitions are used. Although a new prototype is created in the Prototypes table for each lifetime with the suffix '_life_[lifetime]', all deployed agents themselves will have the same original prototype name (and so will the Agents tables).</a:documentation>
+            <oneOrMore>
+                <element name="val">
+                    <data type="int"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </optional>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+</interleave>
+
+</element>
+<element name="ManagerInst">
+<interleave>
+    <optional>
+        <element name="latitude">
+            <a:documentation>Latitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <optional>
+        <element name="longitude">
+            <a:documentation>Longitude of the agent's geographical position. The value should be expressed in degrees as a double.</a:documentation>
+            <data type="double"/>
+        </element>
+    </optional>
+    <element name="prototypes">
+        <a:documentation>A set of facility prototypes that this institution can build. All prototypes in this list must be based on an archetype that implements the cyclus::toolkit::CommodityProducer interface</a:documentation>
+        <oneOrMore>
+            <element name="val">
+                <data type="string"/>
+            </element>
+        </oneOrMore>
+    </element>
+</interleave>
+
+</element>
+
+                  </choice>
+                </element>
+            </interleave> </element>
+          </oneOrMore>
+
+        </interleave> </element>
+    </oneOrMore>
+
+    <oneOrMore>
+      <element name="recipe">
+        <a:documentation>A material composition recipe that can be reused in other places in the simulation.</a:documentation>
+        <interleave>
+          <element name="name">
+            <a:documentation>The name of the recipe used to refer to it elsewhere.</a:documentation>
+            <text/></element>
+          <element name="basis">
+            <a:documentation>Indicating whether this recipe is defined by mass or atom fraction. Valid values: `mass` or `atom`.</a:documentation>
+            <text/></element>
+          <oneOrMore>
+            <element name="nuclide">
+              <a:documentation>Information about each nuclde in this composition.</a:documentation>
+              <interleave>
+                <element name="id">
+                  <a:documentation>A nuclide identifier in any form allowed by PyNE</a:documentation>
+                  <data type="string"/></element>
+                <element name="comp">
+                  <a:documentation>The relative concentration of this nuclide in the basis defined above.</a:documentation>
+                  <data type="double"/></element>
+              </interleave>
+            </element>
+          </oneOrMore>
+        </interleave>
+      </element>
+    </oneOrMore>
+
+    <zeroOrMore>
+      <element name="package">
+        <a:documentation>A package that defines how bulk quantities are shipped between facilities.</a:documentation>
+        <interleave>
+          <element name="name">
+            <a:documentation>The name of this package.</a:documentation>
+            <text/></element>
+          <optional>
+            <element name="fill_min">
+              <a:documentation>The minimum amount of material that is allowed to be shipped in this package.</a:documentation>
+              <data type="double"/></element></optional>
+          <optional>
+            <element name="fill_max">
+              <a:documentation>The maximums amount of material that is allowed to be shipped in this package.</a:documentation>            
+              <data type="double"/></element></optional>
+          <optional>
+            <element name="strategy">
+              <a:documentation>The strategy for filling a set of packages.</a:documentation>
+              <text/></element></optional>
+        </interleave>
+      </element>
+    </zeroOrMore>
+
+    <zeroOrMore>
+      <element name="transportunit">
+        <a:documentation>A transport unit that describes how multiple packages may be shipped in some collection.</a:documentation>
+        <interleave>
+          <element name="name">
+            <a:documentation>The name of this transport unit.</a:documentation>
+            <text/></element>
+          <optional>
+            <element name="fill_min">
+              <a:documentation>The minimum number of packages allowed to be shipped in this transport unit.</a:documentation>
+              <data type="nonNegativeInteger"/></element></optional>
+          <optional>
+            <element name="fill_max">
+              <a:documentation>The maximum number of packages allowed to be shipped in this transport unit.</a:documentation>
+              <data type="nonNegativeInteger"/></element></optional>
+          <optional>
+            <element name="strategy">
+              <a:documentation>The strategy for filling multiple transport units</a:documentation>
+              <text/></element></optional>
+        </interleave>
+      </element>
+    </zeroOrMore>
+
+  </interleave> </element>
 
 </start>
 
