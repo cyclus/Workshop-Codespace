@@ -85,6 +85,9 @@ BR = (12.97121*.998)/(12.8996341) = 1.00353
 ****************************************
 
 -->
+<?xml-model href="../schema/cyclus.rng"
+             type="application/xml"
+             schematypens="http://relaxng.org/ns/structure/1.0"?>
 
 <simulation>
     <control>
