@@ -3,15 +3,12 @@
     "image": "ghcr.io/cyclus/cymetric_24.04_apt/cymetric:latest",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {
-            "username": "vscode",
-            "userUid": "automatic",
-            "userGid": "automatic"
+            "username": "root"
         },
         "ghcr.io/devcontainers/features/git:1": {},
         "ghcr.io/devcontainers/features/github-cli:1": {}
     },
-    "remoteUser": "vscode",
-    "updateRemoteUserUID": true,
+    "remoteUser": "root",
     "waitFor": "postStartCommand",
     "postCreateCommand": "echo 'export LC_ALL=C; unset LANGUAGE' >> ~/.bashrc && /usr/bin/python3 -m pip install --user --upgrade ipykernel --break-system-packages",
     "customizations": {
@@ -26,3 +23,4 @@
         }
     }
 }
+
